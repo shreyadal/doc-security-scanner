@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocShield Pro | Secure Document Scanner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF6B35; /* Orange */
+            --primary-light: #FF8C42;
+            --secondary: #FF3C00;
+            --dark: #0A0A0A; /* Dark black */
+            --darker: #121212;
+            --light: #F5F5F5;
+            --success: #FF9E1B; /* Orange success */
+            --warning: #FF3C38;
+            --border-radius: 8px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --security-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FF6B35' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            background-image: var(--security-pattern);
+            color: var(--light);
+            min-height: 100vh;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 3rem;
+            width: 100%;
+            max-width: 650px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-right: 0.75rem;
+            text-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: rgba(245, 245, 245, 0.7);
+            font-weight: 300;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .upload-area {
+            position: relative;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            transform: translateY(-3px);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            border: 2px dashed rgba(255, 107, 53, 0.3);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(15, 15, 15, 0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .file-label:hover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .file-label:hover::before {
+            opacity: 1;
+        }
+
+        .file-label i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .file-label:hover i {
+            color: var(--primary-light);
+            transform: scale(1.1);
+            text-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
+        }
+
+        .file-label h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+            font-weight: 500;
+        }
+
+        .file-label p {
+            color: rgba(245, 245, 245, 0.5);
+            font-size: 0.9rem;
+        }
+
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--primary-light);
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            border: none;
+            padding: 1rem;
+            width: 100%;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+        }
+
+        .result-container {
+            margin-top: 2rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .result-container.visible {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .result {
+            background: rgba(20, 20, 20, 0.7);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary);
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .result::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .copy-btn {
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 107, 53, 0.3);
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.2);
+        }
+
+        .result-content {
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: rgba(245, 245, 245, 0.8);
+            overflow-x: auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .feature {
+            background: rgba(20, 20, 20, 0.7);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-left: 3px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .feature:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.1);
+        }
+
+        .feature i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            min-width: 20px;
+        }
+
+        .feature-text {
+            font-size: 0.85rem;
+            color: rgba(245, 245, 245, 0.7);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto;
+            border: 4px solid rgba(255, 107, 53, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading p {
+            margin-top: 1rem;
+            color: var(--primary-light);
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: rgba(10, 10, 10, 0.9);
+            color: var(--light);
+            text-align: center;
+            border-radius: 4px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            border: 1px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: var(--dark);
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Security elements */
+        .security-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--primary);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .scanning-animation {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: scanning 2s linear infinite;
+        }
+
+        @keyframes scanning {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="security-badge">
+            <i class="fas fa-lock"></i>
+            <span>SECURE CONNECTION</span>
+        </div>
+
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt logo-icon"></i>
+            </div>
+            <h1>DocShield Pro</h1>
+            <p class="subtitle">Advanced document security scanning powered by AI</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="scanForm">
+            {% csrf_token %}
+            <div class="upload-area">
+                <input type="file" name="document" id="fileInput" class="file-input" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" required>
+                <label for="fileInput" class="file-label" id="fileLabel">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Upload Your Document</h3>
+                    <p>Drag & drop your file here or click to browse</p>
+                    <span class="file-name" id="fileName"></span>
+                </label>
+                <div class="scanning-animation" style="display: none;"></div>
+            </div>
+
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Analyzing document for security threats...</p>
+            </div>
+
+            <button type="submit" class="btn" id="scanButton">
+                <i class="fas fa-search"></i> Scan Document
+            </button>
+        </form>
+
+        <!-- <div class="features">
+            <div class="feature">
+                <i class="fas fa-lock"></i>
+                <span class="feature-text">Military-grade 256-bit encryption</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-brain"></i>
+                <span class="feature-text">AI-powered threat detection</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-bolt"></i>
+                <span class="feature-text">Real-time scanning</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-fingerprint"></i>
+                <span class="feature-text">Biometric authentication</span>
+            </div>
+        </div> -->
+
+        {% if result %}
+        <div class="result-container visible" id="resultContainer">
+            <div class="result">
+                <div class="result-header">
+                    <div class="result-title">
+                        <i class="fas fa-check-circle"></i>
+                        Scan Results
+                    </div>
+                    <button class="copy-btn" id="copyButton">
+                        <i class="far fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="result-content" id="resultContent">
+                    {{ result }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="toast" id="toastNotification">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Content copied to clipboard!</span>
+    </div>
+
+    <script>
+        // File input handling
+        const fileInput = document.getElementById('fileInput');
+        const fileLabel = document.getElementById('fileLabel');
+        const fileName = document.getElementById('fileName');
+        const scanForm = document.getElementById('scanForm');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const scanButton = document.getElementById('scanButton');
+        const scanningAnimation = document.querySelector('.scanning-animation');
+
+        fileInput.addEventListener('change', function(e) {
+            if (this.files.length) {
+                fileName.textContent = this.files[0].name;
+                fileName.style.display = 'block';
+                
+                // Update label to show file is selected
+                fileLabel.innerHTML = `
+                    <i class="fas fa-file-alt"></i>
+                    <h3>${this.files[0].name}</h3>
+                    <p>Click to change file</p>
+                    <span class="file-name" id="fileName">${formatFileSize(this.files[0].size)}</span>
+                `;
+            }
+        });
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            fileLabel.classList.add('highlight');
+            scanningAnimation.style.display = 'block';
+        }
+
+        function unhighlight() {
+            fileLabel.classList.remove('highlight');
+            scanningAnimation.style.display = 'none';
+        }
+
+        fileLabel.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Form submission
+        scanForm.addEventListener('submit', function() {
+            loadingIndicator.style.display = 'block';
+            scanButton.disabled = true;
+            scanButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
+            scanningAnimation.style.display = 'block';
+        });
+
+        // Copy to clipboard functionality
+        const copyButton = document.getElementById('copyButton');
+        if (copyButton) {
+            copyButton.addEventListener('click', function() {
+                const resultContent = document.getElementById('resultContent');
+                navigator.clipboard.writeText(resultContent.textContent.trim())
+                    .then(() => showToast('Results copied to clipboard!'))
+                    .catch(err => showToast('Failed to copy: ' + err));
+            });
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // If there's a result, ensure the container is visible
+        const resultContainer = document.getElementById('resultContainer');
+        if (resultContainer) {
+            resultContainer.classList.add('visible');
+        }
+    </script>
+</body>
+</html>

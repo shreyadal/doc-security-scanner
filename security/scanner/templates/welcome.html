@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocShield - Secure Document Verification</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-bg: #0a0a0a;
+      --secondary-bg: #1a1a1a;
+      --accent-color: #ff6d00;
+      --accent-hover: #ff8500;
+      --accent-light: rgba(255, 109, 0, 0.1);
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --card-bg: rgba(30, 30, 30, 0.8);
+      --card-hover: rgba(40, 40, 40, 0.9);
+      --safe-color: #34a853;
+      --warning-color: #fbbc05;
+      --danger-color: #ea4335;
+      --border-radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.3);
+      --shadow-accent: 0 0 20px rgba(255, 109, 0, 0.4);
+    }
+    
+    * {
+   
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--primary-bg);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 1.5rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      background: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      gap: 0.5rem;
+    }
+    
+    .logo i {
+      color: var(--accent-color);
+    }
+    
+    .logo span {
+      color: var(--accent-color);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      position: relative;
+      padding: 0.5rem 0;
+    }
+    
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-color);
+      transition: var(--transition);
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="rgba(255,109,0,0.05)" stroke-width="0.5"/></svg>');
+      background-size: 100px 100px;
+      opacity: 0.5;
+      z-index: -2;
+    }
+    
+    .hero-content {
+      max-width: 600px;
+      z-index: 2;
+    }
+    
+    .hero-image {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%) translateX(50px);
+      width: 40%;
+      max-width: 600px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      border: 2px solid rgba(255, 109, 0, 0.3);
+      opacity: 0;
+      transition: opacity 1s ease, transform 1s ease;
+      z-index: 1;
+    }
+    
+    .hero-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--border-radius);
+      background: linear-gradient(45deg, rgba(255, 109, 0, 0.2), transparent);
+      z-index: -1;
+    }
+    
+    .hero-image.visible {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      background: linear-gradient(to right, var(--accent-color), #ff9e00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 10px rgba(255, 109, 0, 0.3));
+    }
+    
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .primary-btn, .secondary-btn {
+      padding: 1rem 2rem;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .primary-btn {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: var(--shadow-accent);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .primary-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(rgba(255,255,255,0.2), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .primary-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 109, 0, 0.6);
+    }
+    
+    .primary-btn:hover::after {
+      opacity: 1;
+    }
+    
+    .secondary-btn {
+      border: 2px solid var(--accent-color);
+      color: var(--accent-color);
+      background: transparent;
+    }
+    
+    .secondary-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-3px);
+    }
+    
+    /* Features Section */
+    .section {
+      padding: 8rem 5%;
+      position: relative;
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: var(--accent-color);
+      border-radius: 2px;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .feature-card {
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+      border: 1px solid rgba(255,255,255,0.05);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      opacity: 0;
+      transform: translateY(20px);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,109,0,0.05), transparent);
+      z-index: -1;
+    }
+    
+    .feature-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(255, 109, 0, 0.3);
+      background: var(--card-hover);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+    }
+    
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    
+    .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      transition: var(--transition);
+    }
+    
+    .safe {
+      background-color: rgba(52, 168, 83, 0.2);
+      color: var(--safe-color);
+    }
+    
+    .warning {
+      background-color: rgba(251, 188, 5, 0.2);
+      color: var(--warning-color);
+    }
+    
+    .danger {
+      background-color: rgba(234, 67, 53, 0.2);
+      color: var(--danger-color);
+    }
+    
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: white;
+    }
+    
+    .feature-card p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    
+    /* How It Works Section */
+    .steps-container {
+      background: rgba(20, 20, 20, 0.5);
+      border-radius: var(--border-radius);
+      padding: 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.5s ease;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+    
+    .step:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    
+    .step.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: var(--accent-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+      font-size: 1.2rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    
+    .step:hover .step-number {
+      transform: scale(1.1);
+    }
+    
+    .step-content {
+      flex: 1;
+    }
+    
+    .step-content h3 {
+      margin-bottom: 0.5rem;
+      color: white;
+      font-size: 1.3rem;
+    }
+    
+    .step-content p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    
+    /* Footer */
+    footer {
+      background: #080808;
+      padding: 4rem 5% 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .footer-logo {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .footer-logo i {
+      color: var(--accent-color);
+    }
+    
+    .footer-logo span {
+      color: var(--accent-color);
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+      position: relative;
+      padding: 0.5rem 0;
+    }
+    
+    .footer-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-color);
+      transition: var(--transition);
+    }
+    
+    .footer-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .footer-links a:hover::after {
+      width: 100%;
+    }
+    
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .social-links a {
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      transition: var(--transition);
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+      background: rgba(255, 109, 0, 0.1);
+      transform: translateY(-3px);
+    }
+    
+    .copyright {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .developer-credit {
+      margin-top: 1rem;
+      color: var(--text-secondary);
+    }
+    
+    .developer-credit a {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .developer-credit a:hover {
+      text-decoration: underline;
+    }
+    
+    /* ==================== */
+    /* NEW ANIMATION EFFECTS */
+    /* ==================== */
+    
+    /* Hexagonal Security Grid */
+    .hex-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.15;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    
+    .hex-grid svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .hex-grid path {
+      stroke: var(--accent-color);
+      stroke-width: 0.5;
+      fill: none;
+      animation: hexPulse 4s infinite alternate;
+    }
+    
+    @keyframes hexPulse {
+      0% { opacity: 0.1; }
+      100% { opacity: 0.3; }
+    }
+    
+    /* Scanning Laser Effect */
+    .scan-laser {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+      box-shadow: 0 0 10px 2px var(--accent-color);
+      z-index: -1;
+      opacity: 0.7;
+      animation: scan 8s linear infinite;
+    }
+    
+    @keyframes scan {
+      0% { top: 0; opacity: 0; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { top: 100%; opacity: 0; }
+    }
+    
+    /* Floating Shield Particles */
+    .shield-particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, var(--accent-color), transparent);
+      border-radius: 50%;
+      opacity: 0.7;
+      filter: blur(1px);
+      z-index: -1;
+      animation: floatParticle 15s infinite linear;
+    }
+    
+    @keyframes floatParticle {
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { transform: translate(100px, -100vh) rotate(360deg); opacity: 0; }
+    }
+    
+    /* Shield Outline Animation */
+    .shield-outline {
+      position: fixed;
+      width: 300px;
+      height: 350px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120"><path d="M50,0 L100,20 L100,80 L50,120 L0,80 L0,20 Z" fill="none" stroke="rgba(255,109,0,0.3)" stroke-width="1"/></svg>') no-repeat center;
+      background-size: contain;
+      z-index: -1;
+      opacity: 0.3;
+      animation: shieldFloat 12s infinite ease-in-out;
+    }
+    
+    @keyframes shieldFloat {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.2; }
+      50% { transform: translate(20px, 20px) rotate(5deg); opacity: 0.4; }
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-image {
+        width: 50%;
+      }
+      
+      .hero h1 {
+        font-size: 3rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 100px;
+      }
+      
+      .hero-content {
+        margin-bottom: 3rem;
+      }
+      
+      .hero-image {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      
+      .cta-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .steps-container {
+        padding: 2rem;
+      }
+      
+      .step {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      
+      .step-number {
+        margin-bottom: 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .feature-card {
+        padding: 1.5rem;
+      }
+      
+      .footer-links {
+        gap: 1rem;
+      }
+      
+      /* Reduce animation intensity on mobile */
+      .hex-grid, .scan-laser, .shield-outline {
+        opacity: 0.1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hexagonal Security Grid -->
+  <div class="hex-grid" id="hexGrid"></div>
+  
+  <!-- Scanning Laser Effect -->
+  <div class="scan-laser" style="animation-delay: 0s;"></div>
+  <div class="scan-laser" style="animation-delay: 2s;"></div>
+  <div class="scan-laser" style="animation-delay: 4s;"></div>
+  <div class="scan-laser" style="animation-delay: 6s;"></div>
+  
+  <!-- Shield Outlines -->
+  <div class="shield-outline" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+  <div class="shield-outline" style="top: 60%; left: 70%; animation-delay: 3s;"></div>
+  <div class="shield-outline" style="top: 30%; left: 60%; animation-delay: 6s;"></div>
+  <div class="shield-outline" style="top: 70%; left: 20%; animation-delay: 9s;"></div>
+  
+  <!-- Navigation -->
+  <nav>
+    <div class="logo">
+      <i class="fas fa-shield-alt"></i> Doc<span>Shield</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#about">About</a>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content animate__animated animate__fadeIn">
+      <h1>Advanced Document Security Verification</h1>
+      <p>Upload your documents to DocShield and instantly verify their safety. Our AI-powered scanning technology detects viruses, malware, and potential security risks in your files with unmatched accuracy.</p>
+      <div class="cta-buttons">
+        <a href="scan/" class="primary-btn">
+          <i class="fab fa-google"></i> Get Started
+        </a>
+        <a href="#how-it-works" class="secondary-btn">
+          <i class="fas fa-play-circle"></i> Learn More
+        </a>
+      </div>
+    </div>
+    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Secure document verification" class="hero-image">
+  </section>
+  
+  <!-- Features Section -->
+  <section class="section" id="features">
+    <h2 class="section-title">Why Trust DocShield?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="security-badge safe">
+          <i class="fas fa-shield-alt"></i> Secure
+        </div>
+        <div class="feature-icon">
+          <i class="fas fa-virus"></i>
+        </div>
+        <h3>Virus Detection</h3>
+        <p>Our system scans for over 10 million known virus signatures to ensure your documents are completely safe to use.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="security-badge safe">
+          <i class="fas fa-lock"></i> Protected
+        </div>
+        <div class="feature-icon">
+          <i class="fas fa-file-contract"></i>
+        </div>
+        <h3>Malware Analysis</h3>
+        <p>Advanced heuristic analysis detects even the newest, previously unknown malware threats in your documents.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="security-badge safe">
+          <i class="fas fa-check-circle"></i> Verified
+        </div>
+        <div class="feature-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3>Content Inspection</h3>
+        <p>We analyze document content for potential security risks like malicious macros or hidden scripts.</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- How It Works Section -->
+  <section class="section" id="how-it-works">
+    <h2 class="section-title">How It Works</h2>
+    <div class="steps-container">
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Upload Your Document</h3>
+            <p>Simply drag and drop your file or select it from your device. We support PDFs, Word documents, Excel sheets, and more.</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Instant Security Scan</h3>
+            <p>Our system performs a comprehensive scan using multiple antivirus engines and heuristic analysis techniques.</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Get Detailed Results</h3>
+            <p>Receive a clear security report showing any threats found and recommendations for action.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer id="about">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <i class="fas fa-shield-alt"></i> Doc<span>Shield</span>
+      </div>
+      <div class="footer-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#about">About</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.linkedin.com/in/arnav-gupta-97612a28a/"><i class="fab fa-linkedin"></i></a>
+        <a href="https://github.com/Arnavv23"><i class="fab fa-github"></i></a>
+      </div>
+      <!-- <div class="copyright">
+        &copy; 2023 DocShield. All rights reserved.
+      </div> -->
+      <div class="developer-credit">
+        Developed by <a href="https://github.com/Arnavv23" target="_blank">Arnav Gupta</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show hero image after slight delay
+      setTimeout(() => {
+        document.querySelector('.hero-image').classList.add('visible');
+      }, 300);
+      
+      // Create hexagonal grid
+      const hexGrid = document.getElementById('hexGrid');
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      
+      // Hexagon parameters
+      const hexSize = 100;
+      const hexWidth = hexSize * Math.sqrt(3);
+      const hexHeight = hexSize * 1.5;
+      
+      // Calculate how many hexagons we need to cover the viewport
+      const cols = Math.ceil(window.innerWidth / hexWidth) + 1;
+      const rows = Math.ceil(window.innerHeight / (hexSize * 0.75)) + 1;
+      
+      // Create hexagons
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const hex = document.createElementNS(svgNS, "path");
+          
+          // Offset every other row
+          const xPos = x * hexWidth + (y % 2) * hexWidth / 2;
+          const yPos = y * hexSize * 0.75;
+          
+          // Hexagon path
+          const path = `M${xPos},${yPos + hexSize/2} 
+                       L${xPos + hexWidth/2},${yPos} 
+                       L${xPos + hexWidth},${yPos + hexSize/2} 
+                       L${xPos + hexWidth},${yPos + hexSize} 
+                       L${xPos + hexWidth/2},${yPos + hexSize*1.5} 
+                       L${xPos},${yPos + hexSize} Z`;
+          
+          hex.setAttribute("d", path);
+          hex.setAttribute("fill", "none");
+          hex.setAttribute("stroke", "var(--accent-color)");
+          hex.setAttribute("stroke-width", "0.5");
+          hex.style.animationDelay = `${(x + y) * 0.1}s`;
+          
+          svg.appendChild(hex);
+        }
+      }
+      
+      hexGrid.appendChild(svg);
+      
+      // Create floating shield particles
+      function createParticles() {
+        const particleCount = 20;
+        
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement('div');
+          particle.classList.add('shield-particle');
+          
+          // Random position and animation
+          const size = Math.random() * 8 + 4;
+          const posX = Math.random() * 100;
+          const delay = Math.random() * 15;
+          const duration = Math.random() * 10 + 10;
+          
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.left = `${posX}%`;
+          particle.style.top = `${Math.random() * 100}%`;
+          particle.style.animationDelay = `${delay}s`;
+          particle.style.animationDuration = `${duration}s`;
+          
+          document.body.appendChild(particle);
+        }
+      }
+      
+      createParticles();
+      
+      // Intersection Observer for scroll animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, observerOptions);
+      
+      // Observe elements
+      document.querySelectorAll('.feature-card, .step').forEach(el => {
+        observer.observe(el);
+      });
+      
+      // Smooth scrolling for navigation
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            window.scrollTo({
+              top: target.offsetTop - 80,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+      
+      // Make hex grid responsive
+      window.addEventListener('resize', function() {
+        // For simplicity, we'll just reload the grid
+        while (svg.firstChild) {
+          svg.removeChild(svg.firstChild);
+        }
+        
+        const newCols = Math.ceil(window.innerWidth / hexWidth) + 1;
+        const newRows = Math.ceil(window.innerHeight / (hexSize * 0.75)) + 1;
+        
+        for (let y = 0; y < newRows; y++) {
+          for (let x = 0; x < newCols; x++) {
+            const hex = document.createElementNS(svgNS, "path");
+            
+            const xPos = x * hexWidth + (y % 2) * hexWidth / 2;
+            const yPos = y * hexSize * 0.75;
+            
+            const path = `M${xPos},${yPos + hexSize/2} 
+                         L${xPos + hexWidth/2},${yPos} 
+                         L${xPos + hexWidth},${yPos + hexSize/2} 
+                         L${xPos + hexWidth},${yPos + hexSize} 
+                         L${xPos + hexWidth/2},${yPos + hexSize*1.5} 
+                         L${xPos},${yPos + hexSize} Z`;
+            
+            hex.setAttribute("d", path);
+            hex.setAttribute("fill", "none");
+            hex.setAttribute("stroke", "var(--accent-color)");
+            hex.setAttribute("stroke-width", "0.5");
+            hex.style.animationDelay = `${(x + y) * 0.1}s`;
+            
+            svg.appendChild(hex);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
